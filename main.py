@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import csv
 import sys
-sys.setdefaultencoding('utf-8')
+
 
 url_2 = sys.argv[1]
 jmeno_souboru = sys.argv[2]
@@ -52,7 +52,7 @@ hlavicka = ("Číslo obce ", "Jméno obce", "Seznam", "Vydané", "Platné", bez_
 print(hlavicka)
 
 # CSV zapis na novou lajnu
-with open(jmeno_souboru, 'a', newline='') as file:
+with open(jmeno_souboru, 'a', newline='', encoding='utf-8') as file:
     writer = csv.writer(file)
     writer.writerow(hlavicka)
 
@@ -66,7 +66,7 @@ while pocitadlo <= 2:
     table = tables[pocitadlo]
     rows = table.find_all('tr')
 
-    with open(jmeno_souboru, 'a', newline='') as file:
+    with open(jmeno_souboru, 'a', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
 
         for row in rows:
