@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import csv
 import sys
+sys.setdefaultencoding('utf-8')
 
 url_2 = sys.argv[1]
 jmeno_souboru = sys.argv[2]
