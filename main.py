@@ -4,11 +4,15 @@ import csv
 import sys
 
 
+
+
 url_2 = sys.argv[1]
 jmeno_souboru = sys.argv[2]
 url_3 = url_2.split("ps2017nss/")[0] + "ps2017nss/"
 
 # definice extrakce hlasu
+#uprava csv na konci
+
 
 def extrahovat_hlasy(url):
     hlasy = []
@@ -45,15 +49,17 @@ for table in tables[1:3]:
             strany.append(cells[1].text.strip())
 
 
-zapis_strany = ', '.join(stran for stran in strany)
-bez_znaku = zapis_strany.replace("-", "").replace("ROZUMNÍstop migraci,diktát.EU", "ROZUMNÍ-stop migraci_diktát.EU").replace(" ", "")
+zapis_strany = '; '.join(stran for stran in strany)
+bez_znaku = zapis_strany.replace("-", "").replace("ROZUMNÍstop migraci,diktát.EU", "ROZUMNÍ-stop migraci_diktát.EU").replace(" ", "").replace(",", ";")
 
-hlavicka = ("Číslo obce ", "Jméno obce", "Seznam", "Vydané", "Platné", bez_znaku)
-print(hlavicka)
+hlavicka = ("Číslo obce", "Jméno obce", "Seznam", "Vydané", "Platné") + (bez_znaku,)
+
+
+
 
 # CSV zapis na novou lajnu
 with open(jmeno_souboru, 'a', newline='', encoding='utf-8') as file:
-    writer = csv.writer(file)
+    writer = csv.writer(file, delimiter=';')
     writer.writerow(hlavicka)
 
 pocitadlo = 0
@@ -67,7 +73,7 @@ while pocitadlo <= 2:
     rows = table.find_all('tr')
 
     with open(jmeno_souboru, 'a', newline='', encoding='utf-8') as file:
-        writer = csv.writer(file)
+        writer = csv.writer(file, delimiter=';')
 
         for row in rows:
             cells = row.find_all('td')
@@ -81,7 +87,7 @@ while pocitadlo <= 2:
 
                     url = url_3 + podstranka_url
                     vysledek = extrahovat_hlasy(url)
-                    vysledek_bez_znaku = vysledek.replace("-", "").replace(" ", "").replace("'", "").replace('"', "")
+                    vysledek_bez_znaku = vysledek.replace("-", "").replace(" ", "").replace("'", "").replace('"', "").replace(',', ";").replace('"', '')
 
                     response = requests.get(url)
                     html_content = response.content
@@ -97,7 +103,21 @@ while pocitadlo <= 2:
                             vydane_obalky = cells[4].text.strip()
                             odevzdane = cells[7].text.strip()
 
-                            print([obec_cislo, jmeno_obce, v_seznamu, vydane_obalky, odevzdane, vysledek_bez_znaku])
                             writer.writerow([obec_cislo, jmeno_obce, v_seznamu, vydane_obalky, odevzdane, vysledek_bez_znaku])
 
     pocitadlo += 1
+# Název původního souboru
+vstupni_soubor = jmeno_souboru
+# Název souboru pro výstup
+vystupni_soubor = jmeno_souboru
+
+with open(vstupni_soubor, 'r') as soubor:
+    ctecka = csv.reader(soubor)
+    data = list(ctecka)
+
+# Odstranění uvozovek z dat
+nova_data = [[hodnota.replace('"', '') for hodnota in radek] for radek in data]
+
+with open(vystupni_soubor, 'w', newline='') as soubor:
+    pisar = csv.writer(soubor)
+    pisar.writerows(nova_data)
