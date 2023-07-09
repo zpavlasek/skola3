@@ -13,4 +13,4 @@ druha podmínka je jmeno csv souboru: "datovy.csv"
 
 Při správné funkci program vyexportuje volební hlasy jednotlivých okrsků do CSV souboru se kterýma je možné dále pracovat. 
 
-import do excel provádejte pomocí "soubor import vybrte kodování utf 8 a oddělovač je středník ;
+import do excel provádejte pomocí "soubor import vybrte kodování utf 8 a oddělovač je čárka ","
